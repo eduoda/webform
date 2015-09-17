@@ -123,7 +123,7 @@ function webform_form_submit(form, form_state) {
   try {
 
     //dpm('webform_form_submit');
-    //console.log(form);
+    console.log(form);
     //console.log(form_state);
 
     var submission = {
@@ -141,7 +141,9 @@ function webform_form_submit(form, form_state) {
     });
 
     webform_submission_create(form.uuid, submission, {
-        success: function(result) {
+        success: function(result,tries) {
+          if(tries>1)
+            return;
           //console.log(result);
 
           // Depending on the webform's "Redirection location" settings, move
@@ -167,7 +169,12 @@ function webform_form_submit(form, form_state) {
             drupalgap_alert(_messages);
           }
           else { drupalgap_alert(message); }
-        }
+        },
+        queued: function(options){
+          form.reset();
+          drupalgap_alert(options.tries);
+        },
+        retry: true
     });
 
   }
