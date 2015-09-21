@@ -429,22 +429,23 @@ function webform_form_submit(form, form_state) {
     });
 
     webform_submission_create(form.uuid, submission, {
-        success: function(result,tries) {
-          if(tries>1)
+        success: function(result) {
+          if(typeof $('#'+form.id)[0] === 'undefined')
             return;
-          //console.log(result);
-
-          // Depending on the webform's "Redirection location" settings, move
-          // the user along and notify them accordingly.
-          switch (form.webform.redirect_url) {
-            //case '<confirmation>': // Confirmation page
-            //case '<none>': // No redirect (reload current page)
-            default:
-              var msg = form.webform.confirmation;
-              if (!empty(msg)) { drupalgap_set_message(msg); }
-              drupalgap_goto(drupalgap_path_get(), { reloadPage: true });
-              break;
-          }
+          $('#'+form.id)[0].reset();
+//           //console.log(result);
+// 
+//           // Depending on the webform's "Redirection location" settings, move
+//           // the user along and notify them accordingly.
+//           switch (form.webform.redirect_url) {
+//             //case '<confirmation>': // Confirmation page
+//             //case '<none>': // No redirect (reload current page)
+//             default:
+//               var msg = form.webform.confirmation;
+//               if (!empty(msg)) { drupalgap_set_message(msg); }
+//               drupalgap_goto(drupalgap_path_get(), { reloadPage: true });
+//               break;
+//           }
 
         },
         error: function(xhr, status, message) {
@@ -459,8 +460,9 @@ function webform_form_submit(form, form_state) {
           else { drupalgap_alert(message); }
         },
         queued: function(options){
-          form.reset();
-          drupalgap_alert(options.tries);
+          if(typeof $('#'+form.id)[0] === 'undefined')
+            return;
+          $('#'+form.id)[0].reset();
         },
         retry: true
     });
